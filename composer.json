@@ -27,7 +27,7 @@
                 "MohdNazrul\\CTOSKYCLaravel\\CTOSKYCServiceProvider"
             ],
             "aliases": {
-                "CTOSV2": "MohdNazrul\\CTOSKYCLaravel\\CTOSKYCApiFacade"
+                "CTOSKYC": "MohdNazrul\\CTOSKYCLaravel\\CTOSKYCApiFacade"
             }
         }
     }
