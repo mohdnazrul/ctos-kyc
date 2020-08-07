@@ -26,34 +26,20 @@ class CTOSKYCApi
     public function generateXMLFromArray($dataArray, $method, $XMLEscape = true)
     {
 
-        $xmlString = '<batch output="0" no="1234" xmlns="http://ws.cmctos.com.my/ctosnet/kyc">';
+        $xmlString = '<batch no="1234" output="0" xmlns="http://ws.cmctos.com.my/ctosnet/kyc">';
 
         foreach ($dataArray as $key => $value) {
             if ($key == 'records') {
                 $xmlString .= "<$key>";
                 foreach ($value as $key2 => $innerValue) {
                     if (!empty($innerValue)) {
-
-                        if ($key2 == 'type') {
-                            if($innerValue == 'C') {
-                                $xmlString .= "<$key2>$innerValue</$key2>";
-                            } elseif($innerValue == 'B') {
-                                $xmlString .= "<$key2>$innerValue</$key2>";
-                            } else {
-                                $xmlString .= "<$key2>$innerValue</$key2>";
-                            }
-
-                        }  else {
-                            $xmlString .= "<$key2>$innerValue</$key2>";
-                        }
-
+                        $xmlString .= "<$key2>$innerValue</$key2>";
                     } else {
                         $xmlString .= "<$key2/>";
                     }
                 }
                 $xmlString .= "</$key>";
-            }
-            else {
+            } else {
                 if (!empty($value)) {
                     $xmlString .= "<$key>$value</$key>";
                 } else {
@@ -61,7 +47,6 @@ class CTOSKYCApi
                 }
 
             }
-
         }
         $xmlString .= '</batch>';
         
@@ -71,14 +56,14 @@ class CTOSKYCApi
             $escape = $xmlString;
         }
 
-        $str ='<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.proxy.xml.ctos.com.my/">'
+        $str = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.proxy.xml.ctos.com.my/">'
             . '<soapenv:Header/>'
             . '<soapenv:Body>'
-            . '<ws:request>'
+            . '<ws:requestKyc>'
             . '<!--Optional:-->'
             . '<input>';
         $str .= $escape;
-        $str .= '</input></ws:request></soapenv:Body></soapenv:Envelope>';
+        $str .= '</input></ws:requestKyc></soapenv:Body></soapenv:Envelope>';
 
         return $str;
 
@@ -130,8 +115,8 @@ class CTOSKYCApi
 
     private function getResponseBody($response)
     {
-        $response1 = str_replace("<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Body><ns2:requestResponse xmlns:ns2=\"http://ws.proxy.xml.ctos.com.my/\"><return>", "", $response);
-        $response2 = str_replace("</return></ns2:requestResponse></S:Body></S:Envelope>", "", $response1);
+        $response1 = str_replace("<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Body><ns2:requestKycResponse xmlns:ns2=\"http://ws.proxy.xml.ctos.com.my/\"><return>", "", $response);
+        $response2 = str_replace("</return></ns2:requestKycResponse></S:Body></S:Envelope>", "", $response1);
         return $response2;
     }
 
