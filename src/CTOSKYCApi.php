@@ -74,11 +74,11 @@ class CTOSKYCApi
         $str ='<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.proxy.xml.ctos.com.my/">'
             . '<soapenv:Header/>'
             . '<soapenv:Body>'
-            . '<ws:request>'
+            . '<ws:requestKyc>'
             . '<!--Optional:-->'
             . '<input>';
         $str .= $escape;
-        $str .= '</input></ws:request></soapenv:Body></soapenv:Envelope>';
+        $str .= '</input></ws:requestKyc></soapenv:Body></soapenv:Envelope>';
 
         return $str;
 
@@ -109,7 +109,29 @@ class CTOSKYCApi
         } else {
             return $this->getResponseBody($response);
         }
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_URL, $this->serviceURL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $requestXML); // the SOAP request
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->Headers($requestXML));
 
+        $response = curl_exec($ch);
+        if (curl_errno($ch)) {
+            return new \Exception(curl_error($ch));
+        }
+
+        curl_close($ch);
+
+        if($decryptedResponse){
+            return base64_decode($this->getResponseBody($response));
+        } else {
+            return $this->getResponseBody($response);
+        }
     }
 
     private function Headers($requestXML){
@@ -130,7 +152,7 @@ class CTOSKYCApi
 
     private function getResponseBody($response)
     {
-        $response1 = str_replace("<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Body><ns2:requestResponse xmlns:ns2=\"http://ws.proxy.xml.ctos.com.my/\"><return>", "", $response);
+        $response1 = str_replace("<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Body><ns2:requestKycResponse xmlns:ns2=\"http://ws.proxy.xml.ctos.com.my/\"><return>", "", $response);
         $response2 = str_replace("</return></ns2:requestResponse></S:Body></S:Envelope>", "", $response1);
         return $response2;
     }
