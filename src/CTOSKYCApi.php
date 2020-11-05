@@ -131,7 +131,7 @@ class CTOSKYCApi
     private function getResponseBody($response)
     {
         $response1 = str_replace("<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Body><ns2:requestKycResponse xmlns:ns2=\"http://ws.proxy.xml.ctos.com.my/\"><return>", "", $response);
-        $response2 = str_replace("</return></ns2:requestResponse></S:Body></S:Envelope>", "", $response1);
+        $response2 = str_replace("</return></ns2:requestKycResponse></S:Body></S:Envelope>", "", $response1);
         return $response2;
     }
 
