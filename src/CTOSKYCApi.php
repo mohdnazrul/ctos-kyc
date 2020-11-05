@@ -109,29 +109,7 @@ class CTOSKYCApi
         } else {
             return $this->getResponseBody($response);
         }
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-        curl_setopt($ch, CURLOPT_URL, $this->serviceURL);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $requestXML); // the SOAP request
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->Headers($requestXML));
 
-        $response = curl_exec($ch);
-        if (curl_errno($ch)) {
-            return new \Exception(curl_error($ch));
-        }
-
-        curl_close($ch);
-
-        if($decryptedResponse){
-            return base64_decode($this->getResponseBody($response));
-        } else {
-            return $this->getResponseBody($response);
-        }
     }
 
     private function Headers($requestXML){
